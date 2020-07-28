@@ -122,7 +122,7 @@ public class MavenRepositoryProvisioner
         retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(),
             config.getSourceUsername(), config.getSourcePassword(),
             config.getIncludeSources(), config.getIncludeJavadoc(),
-            config.getIncludeProvidedScope(), config.getIncludeTestScope(), config.getIncludeRuntimeScope() );
+            config.getIncludeCompileScope(), config.getIncludeProvidedScope(), config.getIncludeTestScope(), config.getIncludeRuntimeScope() );
 
         logger.info( "Artifact retrieval completed." );
       }

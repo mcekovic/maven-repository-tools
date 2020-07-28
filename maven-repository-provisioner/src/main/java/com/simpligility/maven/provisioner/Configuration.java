@@ -55,6 +55,10 @@ public class Configuration
                 description = "Flag to enable/disable download of javadoc artifacts.", arity = 1 )
     private Boolean includeJavadoc = true;
     
+    @Parameter( names = { "-ic", "-includeCompileScope" },
+                description = "Flag to include/exclude provisioning of dependencies with compile scope.", arity = 1 )
+    private Boolean includeCompileScope = false;
+
     @Parameter( names = { "-ip", "-includeProvidedScope" },
                 description = "Flag to include/exclude provisioning of dependencies with provided scope.", arity = 1 )
     private Boolean includeProvidedScope = false;
@@ -127,7 +131,12 @@ public class Configuration
         this.includeJavadoc = includeJavadoc;
     }
 
-    public void setIncludeProvidedScope( Boolean includeProvidedScope )
+    public void setIncludeCompileScope(Boolean includeCompileScope)
+    {
+        this.includeCompileScope = includeCompileScope;
+    }
+
+    public void setIncludeProvidedScope(Boolean includeProvidedScope )
     {
       this.includeProvidedScope = includeProvidedScope;
     }
@@ -220,6 +229,11 @@ public class Configuration
         return includeJavadoc;
     }
 
+    public Boolean getIncludeCompileScope()
+    {
+        return includeCompileScope;
+    }
+
     public Boolean getIncludeProvidedScope()
     {
         return includeProvidedScope;
@@ -274,6 +288,7 @@ public class Configuration
       }
       builder.append( "IncludeSources: " + getIncludeSources() + "\n" )
         .append( "IncludeJavadoc: " + getIncludeJavadoc() + "\n" )
+        .append( "IncludeCompileScope: " + getIncludeCompileScope() + "\n" )
         .append( "IncludeProvidedScope: " + getIncludeProvidedScope() + "\n" )
         .append( "IncludeTestScope: " + getIncludeTestScope() + "\n" )
         .append( "IncludeRuntimeScope: " + getIncludeRuntimeScope() + "\n" )

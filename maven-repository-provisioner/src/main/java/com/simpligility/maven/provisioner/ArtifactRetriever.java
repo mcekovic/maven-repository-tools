@@ -78,7 +78,7 @@ public class ArtifactRetriever
 
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, String username, 
                          String password, boolean includeSources,
-                         boolean includeJavadoc, boolean includeProvidedScope,
+                         boolean includeJavadoc, boolean includeCompileScope, boolean includeProvidedScope,
                          boolean includeTestScope, boolean includeRuntimeScope )
     {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
@@ -92,15 +92,16 @@ public class ArtifactRetriever
 
         sourceRepository = builder.build();
 
-        getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope, includeRuntimeScope );
+        getArtifactResults( artifactCoordinates, includeCompileScope, includeProvidedScope, includeTestScope,
+           includeRuntimeScope );
 
         getAdditionalArtifactsForRequest( artifactCoordinates );
 
         getAdditionalArtifactsForArtifactsInCache( includeSources, includeJavadoc );
     }
 
-    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean
-            includeProvidedScope, boolean includeTestScope, boolean includeRuntimeScope )
+    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeCompileScope,
+            boolean includeProvidedScope, boolean includeTestScope, boolean includeRuntimeScope )
     {
 
         List<Artifact> artifacts = new ArrayList<Artifact>();
@@ -114,12 +115,19 @@ public class ArtifactRetriever
             DependencyFilterUtils.classpathFilter( JavaScopes.TEST );
         
         Collection<String> includes = new ArrayList<String>();
-        // we always include compile scope, not doing that makes no sense
-        includes.add( JavaScopes.COMPILE );
-        
+
         Collection<String> excludes = new ArrayList<String>();
         // always exclude system scope since it is machine specific and wont work in 99% of cases
         excludes.add( JavaScopes.SYSTEM );
+
+        if ( includeCompileScope )
+        {
+            includes.add( JavaScopes.COMPILE );
+        }
+        else
+        {
+            excludes.add( JavaScopes.COMPILE );
+        }
 
         if ( includeProvidedScope )
         {
@@ -129,8 +137,8 @@ public class ArtifactRetriever
         {
             excludes.add( JavaScopes.PROVIDED ); 
         }
-        
-        if ( includeTestScope ) 
+
+        if ( includeTestScope )
         {
             includes.add( JavaScopes.TEST );
         }
