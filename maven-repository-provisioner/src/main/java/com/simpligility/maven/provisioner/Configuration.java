@@ -71,6 +71,14 @@ public class Configuration
             description = "Flag to include/exclude provisioning of dependencies with runtime scope.", arity = 1 )
     private Boolean includeRuntimeScope = false;
 
+    @Parameter( names = { "-iy", "-includeSystemScope" },
+            description = "Flag to include/exclude provisioning of dependencies with system scope.", arity = 1 )
+    private Boolean includeSystemScope = false;
+
+    @Parameter( names = { "-ii", "-includeImportScope" },
+            description = "Flag to include/exclude provisioning of dependencies with import scope.", arity = 1 )
+    private Boolean includeImportScope = false;
+
     @Parameter( names = { "-cd", "-cacheDirectory" }, 
                 description = "Local directory used as a cache between resolving and deploying or as the "
                     + "source repository that should be transferred." )
@@ -116,7 +124,7 @@ public class Configuration
         this.sourceUsername = sourceUsername;
     }
     
-    public void seSourcetPassword( String sourcePassword )
+    public void setSourcePassword( String sourcePassword )
     {
         this.sourcePassword = sourcePassword;
     }
@@ -146,7 +154,22 @@ public class Configuration
       this.includeTestScope = includeTestScope;
     }
 
-    public void setCacheDirectory( String cacheDirectory )
+    public void setIncludeRuntimeScope(Boolean includeRuntimeScope)
+    {
+        this.includeRuntimeScope = includeRuntimeScope;
+    }
+
+    public void setIncludeSystemScope(Boolean includeSystemScope)
+    {
+        this.includeSystemScope = includeSystemScope;
+    }
+
+    public void setIncludeImportScope(Boolean includeImportScope)
+    {
+        this.includeImportScope = includeImportScope;
+    }
+
+    public void setCacheDirectory(String cacheDirectory )
     {
         this.cacheDirectory = cacheDirectory;
     }
@@ -249,6 +272,16 @@ public class Configuration
         return includeRuntimeScope;
     }
 
+    public Boolean getIncludeSystemScope()
+    {
+        return includeSystemScope;
+    }
+
+    public Boolean getIncludeImportScope()
+    {
+        return includeImportScope;
+    }
+
     public String getCacheDirectory()
     {
         return cacheDirectory;
@@ -292,6 +325,8 @@ public class Configuration
         .append( "IncludeProvidedScope: " + getIncludeProvidedScope() + "\n" )
         .append( "IncludeTestScope: " + getIncludeTestScope() + "\n" )
         .append( "IncludeRuntimeScope: " + getIncludeRuntimeScope() + "\n" )
+        .append( "IncludeSystemScope: " + getIncludeSystemScope() + "\n" )
+        .append( "IncludeImportScope: " + getIncludeImportScope() + "\n" )
         .append( "Check target: " + getCheckTarget() + "\n" )
         .append( "Verify only: " + getVerifyOnly() + "\n" )
         .append( "Local cache or source repository directory: " + getCacheDirectory() + "\n\n" );

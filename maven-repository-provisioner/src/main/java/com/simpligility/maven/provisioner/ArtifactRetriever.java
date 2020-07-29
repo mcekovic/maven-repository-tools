@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import com.simpligility.maven.Gav;
 import com.simpligility.maven.MavenConstants;
 
+import static org.apache.maven.artifact.Artifact.*;
+
 /**
  * ArtifactRetriever can resolve a dependencies and all transitive dependencies and upstream parent pom's 
  * for a given GAV coordinate and fill a directory with the respective Maven repository containing those components.
@@ -79,7 +81,8 @@ public class ArtifactRetriever
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, String username, 
                          String password, boolean includeSources,
                          boolean includeJavadoc, boolean includeCompileScope, boolean includeProvidedScope,
-                         boolean includeTestScope, boolean includeRuntimeScope )
+                         boolean includeTestScope, boolean includeRuntimeScope,
+                         boolean includeSystemScope, boolean includeImportScope )
     {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
@@ -93,7 +96,7 @@ public class ArtifactRetriever
         sourceRepository = builder.build();
 
         getArtifactResults( artifactCoordinates, includeCompileScope, includeProvidedScope, includeTestScope,
-           includeRuntimeScope );
+           includeRuntimeScope, includeSystemScope, includeImportScope );
 
         getAdditionalArtifactsForRequest( artifactCoordinates );
 
@@ -101,7 +104,8 @@ public class ArtifactRetriever
     }
 
     private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeCompileScope,
-            boolean includeProvidedScope, boolean includeTestScope, boolean includeRuntimeScope )
+            boolean includeProvidedScope, boolean includeTestScope, boolean includeRuntimeScope,
+            boolean includeSystemScope, boolean includeImportScope)
     {
 
         List<Artifact> artifacts = new ArrayList<Artifact>();
@@ -117,8 +121,6 @@ public class ArtifactRetriever
         Collection<String> includes = new ArrayList<String>();
 
         Collection<String> excludes = new ArrayList<String>();
-        // always exclude system scope since it is machine specific and wont work in 99% of cases
-        excludes.add( JavaScopes.SYSTEM );
 
         if ( includeCompileScope )
         {
@@ -151,7 +153,29 @@ public class ArtifactRetriever
         {
             includes.add( JavaScopes.RUNTIME );
         }
-        
+        else
+        {
+            excludes.add( JavaScopes.RUNTIME );
+        }
+
+        if ( includeSystemScope )
+        {
+            includes.add( JavaScopes.SYSTEM );
+        }
+        else
+        {
+            excludes.add( JavaScopes.SYSTEM );
+        }
+
+        if ( includeImportScope )
+        {
+            includes.add( SCOPE_IMPORT );
+        }
+        else
+        {
+            excludes.add( SCOPE_IMPORT );
+        }
+
         DependencySelector selector =
             new AndDependencySelector(
             new ScopeDependencySelector( includes, excludes ),
